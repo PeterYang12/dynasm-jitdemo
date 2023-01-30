@@ -1,5 +1,5 @@
 // Driver file for DynASM-based JITs.
-#include "dynasm-driver.h"
+#include "dynasm_driver.h"
 
 void initjit(dasm_State **state, const void *actionlist) {
   dasm_init(state, 2);

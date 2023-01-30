@@ -1,4 +1,4 @@
-#include "dynasm-driver.h"
+#include "dynasm_driver.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
