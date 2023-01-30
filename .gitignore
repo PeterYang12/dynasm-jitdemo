@@ -1,0 +1,11 @@
+# python
+__pycache__
+*.pyc
+.vscode
+
+# custom files
+.log
+
+# custom dirs
+results/
+.cache/
