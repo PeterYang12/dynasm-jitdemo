@@ -9,6 +9,6 @@
 
 void* labels[lbl__MAX];
 
-void initjit(dasm_State **state, const void *actionlist);
+void initjit(int num);
 void *jitcode(dasm_State **state);
 void free_jitcode(void *code);
