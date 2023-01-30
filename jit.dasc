@@ -1,0 +1,73 @@
+// Most basic DynASM JIT; generates a trivial function that
+// returns a given value, and executes it.
+
+// DynASM directives.
+|.arch x64
+|.actionlist actions
+|.section code, jmp_table
+|.globals lbl_
+
+|.macro ENDBR
+||#if defined (__CET__) && (__CET__ & 1) != 0
+|	.if X64
+|		endbr64
+|	.else
+|		endbr32
+|	.endif
+||#endif
+|.endmacro
+
+#if defined (__CET__) && (__CET__ & 1) != 0
+# define ENDBR_PADDING 4
+#else
+# define ENDBR_PADDING 0
+#endif
+
+// This define affects "|" DynASM lines.  "Dst" must
+// resolve to a dasm_State** that points to a dasm_State*.
+#define Dst &state
+
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    fprintf(stderr, "Usage: jit2 <integer>\n");
+    return 1;
+  }
+
+  int num = atoi(argv[1]);
+  dasm_State *state;
+  initjit(&state, actions);
+
+  // Generate the code.  Each line appends to a buffer in
+  // "state", but the code in this buffer is not fully linked
+  // yet because labels can be referenced before they are
+  // defined.
+  //
+  // The run-time value of C variable "num" is substituted
+  // into the immediate value of the instruction.
+  |  ENDBR
+  |  mov eax, num
+  |  test rax, rax
+  |  lea rdi, aword [>4]
+  |  jmp aword [rdi]
+  |.jmp_table
+  |4:
+  |  .aword >2
+  |.code
+  |2:
+  |  nop
+  |  test rax, rax
+  |  nop
+  |  ret
+
+  // Link the code and write it to executable memory.
+  int (*fptr)() = jitcode(&state);
+
+  // Call the JIT-ted function.
+  int ret = fptr();
+  assert(num == ret);
+
+  // Free the machine code.
+  free_jitcode(fptr);
+
+  return ret;
+}
