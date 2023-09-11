@@ -17,16 +17,28 @@
 ||#endif
 |.endmacro
 
+static int leave(dasm_State **Dst){
+  |.align 8
+  |->hello:
+  | ENDBR
+  | nop
+  | ret
+}
+
 static int yyh_jit(dasm_State **Dst, int num_test) {
+  |.align 8
   |  ENDBR
   |  mov eax, num_test
   |  test eax, eax
+  |  jmp >2
   |  lea rdi, aword [>4]
   |  jmp aword [rdi]
   |.jmp_table
+  |.align 16
   |4:
   |  .aword >2
   |.code
+  |  ENDBR
   |2:
   |  nop
   |  test eax, eax

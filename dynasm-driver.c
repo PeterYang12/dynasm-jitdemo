@@ -7,8 +7,12 @@ void initjit(int num) {
     dasm_setup(&state, dasm_actions);
     yyh_jit(&state, num);
 
+    leave(&state);
     // Link the code and write it to executable memory.
     int (*fptr)() = jitcode(&state);
+
+    static const void *handler = NULL;
+    handler = labels[lbl_hello];
 
     // Call the JIT-ted function.
     int ret = fptr();
