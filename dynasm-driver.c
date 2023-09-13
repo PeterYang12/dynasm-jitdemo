@@ -5,7 +5,9 @@ void initjit(int num) {
     dasm_init(&state, 2);
     dasm_setupglobal(&state, labels, lbl__MAX);
     dasm_setup(&state, dasm_actions);
-    yyh_jit(&state, num);
+    dasm_growpc(&state, 2);
+    // int offset = dasm_getpclabel(&state,2);
+    yyh_jit(&state, num, 1);
 
     leave(&state);
     // Link the code and write it to executable memory.

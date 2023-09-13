@@ -25,12 +25,12 @@ static int leave(dasm_State **Dst){
   | ret
 }
 
-static int yyh_jit(dasm_State **Dst, int num_test) {
+static int yyh_jit(dasm_State **Dst, int num_test, unsigned int target_label) {
   |.align 8
   |  ENDBR
   |  mov eax, num_test
   |  test eax, eax
-  |  jmp >2
+  |  jmp =>target_label
   |  lea rdi, aword [>4]
   |  jmp aword [rdi]
   |.jmp_table
@@ -39,7 +39,7 @@ static int yyh_jit(dasm_State **Dst, int num_test) {
   |  .aword >2
   |.code
   |  ENDBR
-  |2:
+  |=>1:
   |  nop
   |  test eax, eax
   |  nop
